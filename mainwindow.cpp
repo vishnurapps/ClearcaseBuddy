@@ -1,14 +1,26 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+#include <QCoreApplication>
+
+MainWindow::MainWindow(QWidget *parent)
+   : QMainWindow(parent)
 {
-    ui->setupUi(this);
+   // Create the button, make "this" the parent
+   m_button = new QPushButton("My Button", this);
+   // set size and location of the button
+   m_button->setGeometry(QRect(QPoint(100, 100),
+   QSize(200, 50)));
+   lbl_username = new QLabel("Username :", this);
+   //le_username = new QLineEdit(null, this);
+
+   // Connect button signal to appropriate slot
+   connect(m_button, SIGNAL (released()), this, SLOT (handleButton()));
 }
 
-MainWindow::~MainWindow()
+void MainWindow::handleButton()
 {
-    delete ui;
+   // change the text
+   m_button->setText("Example");
+   // resize button
+   m_button->resize(100,100);
 }
