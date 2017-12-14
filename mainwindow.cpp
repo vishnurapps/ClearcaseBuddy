@@ -4,7 +4,6 @@
 #include "mainwindow.h"
 #include <QApplication>
 
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -58,16 +57,33 @@ void MainWindow :: showLoginScreen()
 
     if(cbRemember->isChecked())
     {
-
+            writeToFile(leMachineIP->text(), leUsername->text(), lePassword->text());
     }
 
     wid->setLayout(gridLayout);
     setCentralWidget(wid);
 
     connect(pbCancel, SIGNAL(clicked(bool)), this, SLOT(close()));
-    connect(pbConnect, SIGNAL(clicked(bool)), this, SLOT(close()));
+    connect(pbConnect, SIGNAL(clicked(bool)), this, SLOT(on_pbConnect_clicked()));
+}
+
+void MainWindow::writeToFile()
+{
+    QString filename="Data.txt";
+    QFile file( filename );
+    if ( file.open(QIODevice::ReadWrite) )
+    {
+        QTextStream stream( &file );
+        stream << "something" << endl;
+    }
 }
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::on_pbConnect_clicked()
+{
+    //qDebug()<<"test";
+    QMessageBox::information(this, "Test Button clicked", "You clicked a button");
 }
