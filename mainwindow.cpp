@@ -101,18 +101,27 @@ void MainWindow::ReadFromFile()
     qDebug() << "Inside void MainWindow::ReadFromFile()";
     QString filename="Data.txt";
     QFile mFile(filename);
+    QFileInfo check_file(filename);
+
+    if (!(check_file.exists() && check_file.isFile()))
+    {
+        QMessageBox::information(this, "No Saved Credentials", "Couldn't find any saved credentials. Please save credentials to use this functionality");
+        return;
+    }
     if(!mFile.open(QFile::ReadOnly|QFile::Text))
     {
+
         qDebug() << "Couldnt open file for reading";
         return;
     }
 
     QTextStream in(&mFile);
-    QString mText = in.readAll();
-
-    qDebug() << mText;
-    mFile.flush();
-    mFile.close();
+    QString line = in.readLine();
+    leMachineIP->setText(line);
+    line = in.readLine();
+    leUsername->setText(line);
+    line = in.readLine();
+    lePassword->setText(line);
     mFile.flush();
     mFile.close();
 }
@@ -151,13 +160,7 @@ void MainWindow::createActions()
     connect(aboutQtAct, &QAction::triggered, qApp, &QApplication::aboutQt);
     connect(aboutQtAct, &QAction::triggered, this, &MainWindow::aboutQt);
 
-//    alignmentGroup = new QActionGroup(this);
-//    alignmentGroup->addAction(prefAct);
-//    alignmentGroup->
-//    alignmentGroup->addAction(rightAlignAct);
-//    alignmentGroup->addAction(justifyAct);
-//    alignmentGroup->addAction(centerAct);
-    loadAct->setChecked(true);
+    loadAct->setChecked(false);
 }
 
 void MainWindow::createMenus()
@@ -171,8 +174,6 @@ void MainWindow::createMenus()
     helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(aboutAct);
     helpMenu->addAction(aboutQtAct);
-
-    //formatMenu = editMenu->addMenu(tr("&Format"));
 }
 
 void MainWindow::quit()
@@ -191,15 +192,10 @@ void MainWindow::autoLoad()
 
 void MainWindow::about()
 {
-//    infoLabel->setText(tr("Invoked <b>Help|About</b>"));
-//    QMessageBox::about(this, tr("About Menu"),
-//            tr("The <b>Menu</b> example shows how to create "
-//               "menu-bar menus and context menus."));
     qDebug() << " Inside void MainWindow::about()";
 }
 
 void MainWindow::aboutQt()
 {
-//    infoLabel->setText(tr("Invoked <b>Help|About Qt</b>"));
     qDebug() << " Inside void MainWindow::aboutQt()";
 }

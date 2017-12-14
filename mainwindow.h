@@ -11,6 +11,7 @@
 #include <QVBoxLayout>
 #include <QCheckBox>
 #include <QFile>
+#include <QFileInfo>
 #include <QTextStream>
 #include <QMessageBox>
 #include <QDebug>
