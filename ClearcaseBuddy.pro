@@ -34,3 +34,6 @@ FORMS += \
         mainwindow.ui
 
 INCLUDEPATH += /home/vishnu/study/libssh2-1.8.0/src/
+
+RESOURCES += \
+    clearcaseresource.qrc
