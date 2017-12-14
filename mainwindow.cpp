@@ -193,6 +193,7 @@ void MainWindow::autoLoad()
 void MainWindow::about()
 {
     qDebug() << " Inside void MainWindow::about()";
+    QMessageBox::information(this, "Clear Case Buddy", "This is a opensource project aimed to make the clear case usage simple and easy.");
 }
 
 void MainWindow::aboutQt()
