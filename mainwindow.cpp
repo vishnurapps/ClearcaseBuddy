@@ -65,7 +65,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //setCentralWidget(wid);
 
     connect(pbCancel, SIGNAL(clicked(bool)), this, SLOT(close()));
-    connect(pbConnect, SIGNAL(clicked(bool)), this, SLOT(on_pbConnect_clicked()));
+    connect(pbConnect, SIGNAL(clicked(bool)), this, SLOT(pbConnectclicked()));
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(5);
@@ -131,13 +131,30 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_pbConnect_clicked()
+void MainWindow::pbConnectclicked()
 {
     if(cbRemember->isChecked())
     {
-            writeToFile(leMachineIP->text(), leUsername->text(), lePassword->text());
+        if(leMachineIP->text().isEmpty() ||
+                    leUsername->text().isEmpty() ||
+                    lePassword->text().isEmpty())
+            {
+                QMessageBox::information(this, "Incomplete Information", "All fields are mandatory. Please fill all the fields and retry");
+                return;
+            }
+        writeToFile(leMachineIP->text(), leUsername->text(), lePassword->text());
+        QMessageBox::information(this, "Credentials Saved", "Your login credentials have been saved successfully");
+#ifdef linux
+        loginToServer(leMachineIP->text(), leUsername->text(), lePassword->text());
+#endif
     }
-    QMessageBox::information(this, "Test Button clicked", "You clicked a button");
+    else
+    {
+#ifdef linux
+        loginToServer(leMachineIP->text(), leUsername->text(), lePassword->text());
+#endif
+    }
+
 }
 
 void MainWindow::createActions()
@@ -200,3 +217,38 @@ void MainWindow::aboutQt()
 {
     qDebug() << " Inside void MainWindow::aboutQt()";
 }
+
+int MainWindow::waitsocket(int socket_fd, LIBSSH2_SESSION *session)
+{
+    struct timeval timeout;
+    int rc;
+    fd_set fd;
+    fd_set *writefd = NULL;
+    fd_set *readfd = NULL;
+    int dir;
+
+    timeout.tv_sec = 10;
+    timeout.tv_usec = 0;
+
+    FD_ZERO(&fd);
+
+    FD_SET(socket_fd, &fd);
+
+    /* now make sure we wait in the correct direction */
+    dir = libssh2_session_block_directions(session);
+
+
+    if(dir & LIBSSH2_SESSION_BLOCK_INBOUND)
+        readfd = &fd;
+
+    if(dir & LIBSSH2_SESSION_BLOCK_OUTBOUND)
+        writefd = &fd;
+
+    rc = select(socket_fd + 1, readfd, writefd, NULL, &timeout);
+
+    return rc;
+}
+
+#ifdef linux
+    int MainWindow::loginToServer(QString machineIP, QString userName, QString password);
+#endif
